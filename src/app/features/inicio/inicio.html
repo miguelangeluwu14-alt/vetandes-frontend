@@ -1,0 +1,8 @@
+<div class="page-header"><div><p class="eyebrow">PANEL PRINCIPAL</p><h1>Bienvenido a VetAndes</h1><p class="muted">Gestión clínica veterinaria · Sistema conectado a VetAndes API</p></div></div>
+<div class="card"><h2>Hola, {{auth.sesion()?.nombreCompleto}}</h2><p>Selecciona uno de los módulos de acuerdo con tus permisos. Los registros y resultados se consultan directamente en Oracle a través del backend.</p></div>
+<div class="quick-links">
+ @if(auth.tienePermiso('PRESTACION_LEER')){<a class="quick" routerLink="/prestaciones"><strong>Prestaciones</strong><span>Consultar catálogo veterinario</span></a>}
+ @if(auth.tienePermiso('MASCOTA_LEER')){<a class="quick" routerLink="/mascotas"><strong>Mascotas</strong><span>Propietarios y pacientes</span></a>}
+ @if(auth.tienePermiso('ATENCION_LEER')){<a class="quick" routerLink="/atenciones"><strong>Atenciones</strong><span>Historial y registros</span></a>}
+ @if(auth.tienePermiso('REPORTE_VER')){<a class="quick" routerLink="/reportes"><strong>Reportes</strong><span>Ingresos por especie</span></a>}
+</div>

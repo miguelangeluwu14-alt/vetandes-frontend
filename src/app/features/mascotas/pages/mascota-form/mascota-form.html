@@ -1,0 +1,15 @@
+<div class="page-header"><div><p class="eyebrow">PACIENTES</p><h1>{{id?'Editar mascota':'Nueva mascota'}}</h1></div><a routerLink="/mascotas" class="btn">Volver</a></div>
+@if(error()){<div class="alerta">{{error()}}</div>}
+@if(cargando()){<div class="card">Cargando datos desde el backend…</div>}
+@else{<div class="card form-card">
+@if(!propietarios().length){<div class="alerta">No hay propietarios disponibles en Oracle.</div>}
+<form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid" novalidate>
+<label class="full">Propietario<select class="input" formControlName="propietarioId"><option [ngValue]="null" disabled>Seleccione un propietario</option>@for(p of propietarios();track p.id){<option [ngValue]="p.id">{{p.nombres}} ({{p.dni}})</option>}</select>
+@if(mensaje('propietarioId')){<small class="error">{{mensaje('propietarioId')}}</small>}@else if(form.controls.propietarioId.touched&&form.controls.propietarioId.invalid){<small class="error">Seleccione un propietario.</small>}</label>
+<label>Nombre<input class="input" formControlName="nombre" maxlength="40"/>@if(mensaje('nombre')){<small class="error">{{mensaje('nombre')}}</small>}@else if(form.controls.nombre.touched&&form.controls.nombre.invalid){<small class="error">El nombre debe tener entre 2 y 40 caracteres.</small>}</label>
+<label>Especie<select class="input" formControlName="especie"><option value="PERRO">Perro</option><option value="GATO">Gato</option><option value="OTRO">Otro</option></select>@if(mensaje('especie')){<small class="error">{{mensaje('especie')}}</small>}</label>
+<label>Raza<input class="input" formControlName="raza" maxlength="40"/>@if(mensaje('raza')){<small class="error">{{mensaje('raza')}}</small>}</label>
+<label>Fecha de nacimiento<input class="input" type="date" formControlName="fechaNacimiento" [max]="hoy"/>@if(mensaje('fechaNacimiento')){<small class="error">{{mensaje('fechaNacimiento')}}</small>}@else if(form.controls.fechaNacimiento.touched&&form.controls.fechaNacimiento.invalid){<small class="error">Seleccione una fecha válida.</small>}</label>
+<label>Sexo<select class="input" formControlName="sexo"><option value="M">Macho (M)</option><option value="H">Hembra (H)</option></select>@if(mensaje('sexo')){<small class="error">{{mensaje('sexo')}}</small>}</label>
+<div class="acciones full"><a routerLink="/mascotas" class="btn">Cancelar</a><button type="submit" class="btn btn-primary" [disabled]="guardando()||!propietarios().length">{{guardando()?'Guardando…':(id?'Actualizar':'Registrar')}}</button></div>
+</form></div>}

@@ -1,0 +1,17 @@
+<div class="page-header"><div><p class="eyebrow">CATÁLOGO</p><h1>Prestaciones</h1><p class="muted">Servicios veterinarios registrados</p></div>
+ <a *appSiPermiso="'PRESTACION_ESCRIBIR'" routerLink="/prestaciones/nuevo" class="btn btn-primary">+ Nueva prestación</a></div>
+@if(error()){<div class="alerta" role="alert">{{error()}}</div>}
+@if(aviso()){<div class="exito">{{aviso()}}</div>}
+<div class="card"><div class="toolbar"><input class="input buscador" placeholder="Buscar por código, nombre o especie" [formControl]="filtro"/><button class="btn" (click)="cargar()">Actualizar</button></div>
+@if(cargando()){<p class="muted">Cargando prestaciones…</p>}
+@else if(!filtradas().length){<div class="empty">No se encontraron prestaciones.</div>}
+@else{<div class="table-scroll"><table class="tabla"><thead><tr><th>Código</th><th>Prestación</th><th>Especie</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+@for(p of filtradas();track p.id){<tr><td><strong>{{p.codigo}}</strong></td><td>{{p.nombre}}</td><td>{{p.especieAplicable}}</td><td>{{p.precio|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</td><td><span class="badge" [class.inactivo]="!p.activo">{{p.activo?'Activa':'Inactiva'}}</span></td><td><div class="acciones">
+<a *appSiPermiso="'PRESTACION_ESCRIBIR'" class="btn btn-sm" [routerLink]="['/prestaciones',p.id,'editar']">Editar</a>
+@if(auth.tienePermiso('PRESTACION_ESCRIBIR')){
+ @if(p.activo){<button class="btn btn-sm" (click)="darDeBaja(p)">Dar de baja</button>}
+ @else{<button class="btn btn-sm" (click)="activar(p)">Activar</button>}
+ <button class="btn btn-sm btn-peligro" (click)="eliminar(p)">Eliminar</button>
+}</div></td></tr>}
+</tbody></table></div>}
+</div>

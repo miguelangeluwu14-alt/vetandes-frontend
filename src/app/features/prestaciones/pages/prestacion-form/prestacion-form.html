@@ -1,0 +1,18 @@
+<div class="page-header"><div><p class="eyebrow">CATÁLOGO</p><h1>{{id?'Editar prestación':'Nueva prestación'}}</h1></div><a routerLink="/prestaciones" class="btn">Volver</a></div>
+@if(error()){<div class="alerta" role="alert">{{error()}}</div>}
+@if(cargando()){<div class="card">Cargando prestación…</div>}
+@else{<div class="card form-card"><form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid" novalidate>
+ <label>Código (PRS-000)<input class="input" formControlName="codigo" placeholder="PRS-010" maxlength="7"/>
+ @if(mensaje('codigo')){<small class="error">{{mensaje('codigo')}}</small>}
+ @else if(form.controls.codigo.touched&&form.controls.codigo.invalid){<small class="error">Use el formato PRS-000.</small>}</label>
+ <label>Nombre<input class="input" formControlName="nombre" maxlength="80"/>
+ @if(mensaje('nombre')){<small class="error">{{mensaje('nombre')}}</small>}
+ @else if(form.controls.nombre.touched&&form.controls.nombre.invalid){<small class="error">Ingrese entre 3 y 80 caracteres.</small>}</label>
+ <label>Precio (S/)<input class="input" type="number" min="0.01" step="0.01" formControlName="precio"/>
+ @if(mensaje('precio')){<small class="error">{{mensaje('precio')}}</small>}
+ @else if(form.controls.precio.touched&&form.controls.precio.invalid){<small class="error">El precio debe ser mayor que cero.</small>}</label>
+ <label>Especie aplicable<select class="input" formControlName="especieAplicable"><option value="TODAS">Todas</option><option value="PERRO">Perro</option><option value="GATO">Gato</option></select>
+ @if(mensaje('especieAplicable')){<small class="error">{{mensaje('especieAplicable')}}</small>}</label>
+ <label class="check full"><input type="checkbox" formControlName="activo"/> Prestación activa</label>
+ <div class="acciones full"><a routerLink="/prestaciones" class="btn">Cancelar</a><button class="btn btn-primary" type="submit" [disabled]="guardando()">{{guardando()?'Guardando…':(id?'Actualizar':'Registrar')}}</button></div>
+ </form></div>}

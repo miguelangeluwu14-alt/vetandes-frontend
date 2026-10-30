@@ -1,0 +1,13 @@
+<div class="page-header"><div><p class="eyebrow">ATENCIONES</p><h1>Detalle de atención</h1></div><a routerLink="/atenciones" class="btn">Volver</a></div>
+@if(registrada){<div class="exito">Atención {{registrada}} registrada correctamente. Importes definitivos calculados por el servidor.</div>}
+@if(aviso()){<div class="exito">{{aviso()}}</div>}
+@if(error()){<div class="alerta">{{error()}}</div>}
+@if(cargando()){<div class="card">Consultando atención…</div>}
+@else if(atencion();as a){<div class="card gap-section"><div class="section-heading spaced"><h2>{{a.numero}}</h2><span class="badge" [class.inactivo]="a.estado==='ANULADA'">{{a.estado}}</span></div>
+<div class="info-grid"><p><strong>Fecha:</strong> {{a.fecha|date:'dd/MM/yyyy HH:mm'}}</p><p><strong>Mascota:</strong> {{a.mascotaNombre}} ({{a.especie}})</p><p><strong>Peso:</strong> {{a.peso}} kg</p><p><strong>Registró:</strong> {{a.usuarioRegistro}}</p><p class="full"><strong>Diagnóstico:</strong> {{a.diagnostico||'No consignado'}}</p>@if(a.motivoAnulacion){<p class="full"><strong>Motivo de anulación:</strong> {{a.motivoAnulacion}}</p>}</div></div>
+<div class="card gap-section"><h2>Prestaciones registradas</h2><div class="table-scroll"><table class="tabla"><thead><tr><th>Prestación</th><th>Precio unitario</th><th>Cantidad</th><th>Subtotal</th></tr></thead><tbody>@for(d of a.detalles;track d.prestacionId){<tr><td>{{d.prestacionNombre}}</td><td>{{d.precioUnitario|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</td><td>{{d.cantidad}}</td><td>{{d.subtotal|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</td></tr>}</tbody></table></div><div class="totales"><div><span>Subtotal</span><strong>{{a.subtotal|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</strong></div><div><span>Descuento</span><strong>- {{a.descuento|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</strong></div><div class="total-final"><span>Total definitivo</span><strong>{{a.total|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</strong></div></div></div>
+@if(auth.tienePermiso('ATENCION_ANULAR')&&a.estado==='REGISTRADA'){
+ <div class="card gap-section"><h2>Anulación</h2><p class="muted">El servidor permite anular únicamente atenciones registradas hace 48 horas o menos y con motivo válido.</p>
+ @if(formularioAnulacion()){<label>Motivo (10–200 caracteres)<textarea class="input" rows="3" maxlength="200" [(ngModel)]="motivo" placeholder="Indique el motivo de la anulación"></textarea></label><div class="acciones"><button class="btn" (click)="formularioAnulacion.set(false)">Cancelar</button><button class="btn btn-peligro" [disabled]="guardando()" (click)="anular()">{{guardando()?'Anulando…':'Confirmar anulación'}}</button></div>}
+ @else{<button class="btn btn-peligro" (click)="formularioAnulacion.set(true)">Anular atención</button>}</div>}
+}

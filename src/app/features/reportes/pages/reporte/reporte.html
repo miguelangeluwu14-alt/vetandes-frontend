@@ -1,0 +1,8 @@
+<div class="page-header"><div><p class="eyebrow">INDICADORES</p><h1>Reporte de atenciones por especie</h1><p class="muted">Solo atenciones registradas, excluye anuladas. Consulta agregada en Oracle.</p></div></div>
+@if(error()){<div class="alerta">{{error()}}</div>}
+<div class="card"><form [formGroup]="filtros" (ngSubmit)="cargar()" class="toolbar"><label>Desde<input class="input" type="date" formControlName="desde"/></label><label>Hasta<input class="input" type="date" formControlName="hasta"/></label><button class="btn btn-primary" type="submit">Generar reporte</button></form>
+@if(cargando()){<p>Cargando reporte…</p>}
+@else if(!datos().length){<div class="empty">No hay atenciones registradas para el periodo indicado.</div>}
+@else{<div class="stats"><div class="stat"><span>Total atenciones</span><strong>{{cantidad()}}</strong></div><div class="stat"><span>Ingreso total</span><strong>{{importe()|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</strong></div></div>
+<div class="table-scroll"><table class="tabla"><thead><tr><th>Especie</th><th>Atenciones</th><th>Importe total</th></tr></thead><tbody>@for(r of datos();track r.especie){<tr><td>{{r.especie}}</td><td>{{r.cantidadAtenciones}}</td><td>{{r.importeTotal|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</td></tr>}</tbody></table></div>}
+</div>

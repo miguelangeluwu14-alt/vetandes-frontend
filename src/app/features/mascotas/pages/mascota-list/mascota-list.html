@@ -1,0 +1,10 @@
+<div class="page-header"><div><p class="eyebrow">PACIENTES</p><h1>Mascotas</h1><p class="muted">Pacientes y sus propietarios</p></div><a *appSiPermiso="'MASCOTA_ESCRIBIR'" routerLink="/mascotas/nuevo" class="btn btn-primary">+ Nueva mascota</a></div>
+@if(error()){<div class="alerta">{{error()}}</div>}
+@if(aviso()){<div class="exito">{{aviso()}}</div>}
+<div class="card"><div class="toolbar"><input [formControl]="filtro" class="input buscador" placeholder="Buscar mascota, raza o propietario"/><select class="input select-filtro" [formControl]="propietarioId" (change)="cargar()"><option [ngValue]="null">Todos los propietarios</option>@for(p of propietarios();track p.id){<option [ngValue]="p.id">{{p.nombres}} · {{p.dni}}</option>}</select><button class="btn" (click)="cargar()">Actualizar</button></div>
+@if(cargando()){<p>Cargando mascotas…</p>}
+@else if(!filtradas().length){<div class="empty">No se encontraron mascotas.</div>}
+@else{<div class="table-scroll"><table class="tabla"><thead><tr><th>Mascota</th><th>Especie</th><th>Raza</th><th>Edad</th><th>Propietario</th><th>Acciones</th></tr></thead><tbody>
+@for(m of filtradas();track m.id){<tr><td><strong>{{m.nombre}}</strong></td><td>{{m.especie}}</td><td>{{m.raza||'No indicada'}}</td><td>{{edad(m.fechaNacimiento)}} años</td><td>{{m.propietarioNombre}}</td><td><div class="acciones">@if(auth.tienePermiso('MASCOTA_ESCRIBIR')){<a class="btn btn-sm" [routerLink]="['/mascotas',m.id,'editar']">Editar</a><button class="btn btn-sm btn-peligro" (click)="eliminar(m)">Eliminar</button>}</div></td></tr>}
+</tbody></table></div>}
+</div>

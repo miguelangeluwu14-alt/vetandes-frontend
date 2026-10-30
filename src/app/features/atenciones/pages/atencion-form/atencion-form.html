@@ -1,0 +1,27 @@
+<div class="page-header"><div><p class="eyebrow">ATENCIONES</p><h1>Nueva atención</h1><p class="muted">Registro de cabecera y detalle veterinario</p></div><a routerLink="/atenciones" class="btn">Volver</a></div>
+@if(error()){<div class="alerta" role="alert">{{error()}}</div>}
+@if(cargando()){<div class="card">Consultando mascotas y prestaciones en el backend…</div>}
+@else{<form [formGroup]="form" (ngSubmit)="revisar()" novalidate>
+ <section class="card gap-section"><div class="section-heading"><span class="step">1</span><h2>Mascota y datos clínicos</h2></div>
+ @if(mascotaElegida();as m){<div class="selected"><div><strong>{{m.nombre}}</strong><p>{{m.especie}} · Propietario: {{m.propietarioNombre}}</p></div><button type="button" class="btn" (click)="cambiarMascota()">Cambiar</button></div>}
+ @else{<label>Buscar mascota por nombre o propietario<input class="input" [formControl]="buscarMascota" placeholder="Escriba para buscar…" autocomplete="off"/></label>
+ @if(mascotasEncontradas().length){<div class="suggestions">@for(m of mascotasEncontradas();track m.id){<button type="button" (click)="elegirMascota(m)">{{m.nombre}} · {{m.especie}} · {{m.propietarioNombre}}</button>}</div>}
+ @if(form.controls.mascotaId.touched&&form.controls.mascotaId.invalid){<small class="error">Seleccione una mascota.</small>}}
+ <div class="form-grid"><label>Peso (kg)<input class="input" type="number" min="0.01" step="0.01" formControlName="peso"/>@if(form.controls.peso.touched&&form.controls.peso.invalid){<small class="error">Indique un peso mayor que cero.</small>}</label>
+ <label>Diagnóstico (opcional)<textarea class="input" rows="2" maxlength="300" formControlName="diagnostico"></textarea></label></div>
+ </section>
+ <section class="card gap-section"><div class="section-heading"><span class="step">2</span><h2>Prestaciones del detalle</h2></div>
+ @if(mascotaElegida()){<label>Buscar prestaciones compatibles<input class="input" [formControl]="buscarPrestacion" placeholder="Nombre o código"/></label>
+ @if(opciones().length){<div class="suggestions">@for(p of opciones();track p.id){<button type="button" (click)="agregar(p)">{{p.codigo}} · {{p.nombre}} — S/ {{p.precio}}</button>}</div>}}
+ @else{<p class="muted">Primero selecciona una mascota para filtrar las prestaciones por especie.</p>}
+ <div formArrayName="detalles" class="table-scroll"><table class="tabla"><thead><tr><th>Prestación</th><th>Precio estimado</th><th>Cantidad</th><th>Subtotal estimado</th><th></th></tr></thead><tbody>
+ @for(linea of detalles.controls;track linea;let i=$index){<tr [formGroupName]="i"><td>{{resumen()[i]?.p?.nombre}}</td><td>{{resumen()[i]?.precio|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</td><td><input class="input qty" type="number" min="1" max="3" step="1" formControlName="cantidad"/>@if(linea.controls.cantidad.touched&&linea.controls.cantidad.invalid){<small class="error">De 1 a 3.</small>}</td><td>{{resumen()[i]?.subtotal|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</td><td><button class="btn btn-sm" type="button" (click)="quitar(i)">Quitar</button></td></tr>}
+ @if(!detalles.length){<tr><td colspan="5" class="empty">Agrega de 1 a 8 prestaciones; no se permiten repetidas.</td></tr>}
+ </tbody></table></div>
+ @if(advertencia()&&detalles.length){<p class="error">{{advertencia()}}</p>}
+ <div class="totales"><div><span>Subtotal estimado</span><strong>{{subtotal()|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</strong></div><div><span>Descuento (10 % con 3 o más distintas)</span><strong>- {{descuento()|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</strong></div><div class="total-final"><span>Total estimado</span><strong>{{total()|currency:'PEN':'symbol':'1.2-2':'es-PE'}}</strong></div></div>
+ <p class="muted tiny">El backend recalcula precios, subtotales, descuento y total definitivo. Solo se envían IDs y cantidades.</p>
+ </section>
+ @if(confirmando()){<section class="card confirmation"><h2>Confirmar atención</h2><p>Revisa los datos. Se registrará una atención de {{detalles.length}} prestación(es) por un total <strong>estimado</strong> de {{total()|currency:'PEN':'symbol':'1.2-2':'es-PE'}}.</p><div class="acciones"><button type="button" class="btn" (click)="confirmando.set(false)">Seguir editando</button><button type="button" class="btn btn-primary" [disabled]="enviando()" (click)="registrar()">{{enviando()?'Registrando…':'Confirmar y registrar'}}</button></div></section>}
+ @else{<div class="acciones end"><a class="btn" routerLink="/atenciones">Cancelar</a><button class="btn btn-primary" type="submit" [disabled]="enviando()||!detalles.length">Revisar atención</button></div>}
+ </form>}
